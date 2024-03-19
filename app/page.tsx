@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import SignInBtn from './components/SignInBtn';
+import SignInBtn from './auth/components/SignInBtn';
 
 export default function Home() {
   return (
