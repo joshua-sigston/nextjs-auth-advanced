@@ -11,7 +11,7 @@ import {
   zodResolver,
   ErrorMsg,
   SuccessMsg,
-  signIn,
+  signInUser,
 } from '@/app/imports';
 import {
   Form,
@@ -38,9 +38,10 @@ export default function SignInForm() {
     setError('');
     setSuccess('');
     startTransition(() => {
-      signIn(values).then((data) => {
-        setError(data.error);
-        setSuccess(data.success);
+      signInUser(values).then((data) => {
+        setError(data?.error);
+        // @ts-ignore
+        setSuccess(data?.success);
       });
     });
   };

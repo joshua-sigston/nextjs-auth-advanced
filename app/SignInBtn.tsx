@@ -16,7 +16,7 @@ export default function SignInBtn({
   const router = useRouter();
 
   const onClick = () => {
-    router.push(`/auth/login`);
+    router.push(`/auth/signIn`);
   };
 
   if (mode === 'modal') {
