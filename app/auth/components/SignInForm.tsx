@@ -5,6 +5,7 @@ import CardWrapper from './CardWrapper';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import * as z from 'zod';
+import { useSearchParams } from 'next/navigation';
 import {
   useForm,
   SignInSchema,
@@ -23,6 +24,11 @@ import {
 } from '@/components/ui/form';
 
 export default function SignInForm() {
+  const searchParams = useSearchParams();
+  const urlError =
+    searchParams.get('error') === 'OAuthAccountNotLinked'
+      ? 'Email already in use with diffrent provider'
+      : '';
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | undefined>('');
   const [success, setSuccess] = useState<string | undefined>('');
@@ -93,7 +99,7 @@ export default function SignInForm() {
               )}
             />
           </div>
-          <ErrorMsg message={error} />
+          <ErrorMsg message={error || urlError} />
           <SuccessMsg message={success} />
           <Button
             disabled={isPending}

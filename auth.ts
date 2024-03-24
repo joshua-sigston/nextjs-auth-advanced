@@ -11,9 +11,21 @@ export const {
   signIn,
   signOut
 } = NextAuth({
+  pages: {
+    signIn: '/auth/signIn',
+    error: '/auth/error'
+  },
+  events: {
+    async linkAccount({user}) {
+      await db.user.update({
+        where: {id: user.id},
+        data: {emailVerified: new Date()}
+      })
+    }
+  },
   callbacks: {
     async session({token, session}) {
-      console.log({sessionToken: token, session})
+      // console.log({sessionToken: token, session})
       if (token.sub && session.user) {
         session.user.id = token.sub
       }
@@ -24,7 +36,7 @@ export const {
       return session
     },
     async jwt({token}) {
-      console.log({token})
+      // console.log({token})
       if(!token.sub) return token
 
       const existingUser = await getUserById(token.sub)
