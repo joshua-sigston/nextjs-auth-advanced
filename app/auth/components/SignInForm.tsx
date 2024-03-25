@@ -46,7 +46,6 @@ export default function SignInForm() {
     startTransition(() => {
       signInUser(values).then((data) => {
         setError(data?.error);
-        // @ts-ignore
         setSuccess(data?.success);
       });
     });
