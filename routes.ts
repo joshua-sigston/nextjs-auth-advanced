@@ -3,7 +3,7 @@
  * do not require authentication
  * @type {string[]}
 */
-export const publicRoutes = ['/']
+export const publicRoutes = ['/', '/auth/new-verification']
 
 export const authRoutes = ['/auth/signIn', '/auth/register', '/auth/error']
 

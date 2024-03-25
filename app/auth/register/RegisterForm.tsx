@@ -1,18 +1,17 @@
 'use client';
 
 import React, { useState, useTransition } from 'react';
-import CardWrapper from './CardWrapper';
+import CardWrapper from '../components/CardWrapper';
+import * as z from 'zod';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import * as z from 'zod';
-import { useSearchParams } from 'next/navigation';
 import {
+  RegisterSchema,
   useForm,
-  SignInSchema,
   zodResolver,
   ErrorMsg,
   SuccessMsg,
-  signInUser,
+  register,
 } from '@/app/imports';
 import {
   Form,
@@ -23,39 +22,35 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 
-export default function SignInForm() {
-  const searchParams = useSearchParams();
-  const urlError =
-    searchParams.get('error') === 'OAuthAccountNotLinked'
-      ? 'Email already in use with diffrent provider'
-      : '';
+export default function RegisterForm() {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | undefined>('');
   const [success, setSuccess] = useState<string | undefined>('');
-  const form = useForm<z.infer<typeof SignInSchema>>({
-    resolver: zodResolver(SignInSchema),
+  const form = useForm<z.infer<typeof RegisterSchema>>({
+    resolver: zodResolver(RegisterSchema),
     defaultValues: {
       email: '',
       password: '',
+      name: '',
     },
   });
 
-  const onSubmit = (values: z.infer<typeof SignInSchema>) => {
+  const onSubmit = (values: z.infer<typeof RegisterSchema>) => {
     setError('');
     setSuccess('');
     startTransition(() => {
-      signInUser(values).then((data) => {
-        setError(data?.error);
-        setSuccess(data?.success);
+      register(values).then((data) => {
+        setError(data.error);
+        setSuccess(data.success);
       });
     });
   };
 
   return (
     <CardWrapper
-      headerLabel="Welcome Back"
-      backBtnLabel="Don't have an account"
-      backBtnHref="/auth/register"
+      headerLabel="Create an account"
+      backBtnLabel="Have an account?"
+      backBtnHref="/auth/signIn"
       showSocial
     >
       <Form {...form}>
@@ -98,7 +93,24 @@ export default function SignInForm() {
               )}
             />
           </div>
-          <ErrorMsg message={error || urlError} />
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Name</FormLabel>
+                <FormControl>
+                  <Input
+                    disabled={isPending}
+                    {...field}
+                    placeholder="john doe"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <ErrorMsg message={error} />
           <SuccessMsg message={success} />
           <Button
             disabled={isPending}
@@ -106,7 +118,7 @@ export default function SignInForm() {
             variant="default"
             className="w-full"
           >
-            Sign In
+            Create Account
           </Button>
         </form>
       </Form>
