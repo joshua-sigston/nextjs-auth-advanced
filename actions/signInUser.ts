@@ -6,7 +6,7 @@ import { signIn } from '@/auth'
 import { DEFAULT_SIGNIN_REDIRECT } from '@/routes'
 import { AuthError } from 'next-auth'
 import { generateVerificationToken } from '@/lib/tokens'
-import { getUserByEmail } from '@/helpers/user'
+import { getUserByEmail } from '@/utils/user'
 import { sendVerificationEmail } from '@/lib/mail'
 
 export const signInUser = async (values: z.infer<typeof SignInSchema>) => {

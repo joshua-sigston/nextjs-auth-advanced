@@ -1,19 +1,17 @@
 'use client';
 
 import React, { useState, useTransition } from 'react';
-import Link from 'next/link';
 import CardWrapper from '../components/CardWrapper';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import * as z from 'zod';
-import { useSearchParams } from 'next/navigation';
+import { reset } from '@/actions/reset';
 import {
   useForm,
-  SignInSchema,
+  ResetSchema,
   zodResolver,
   ErrorMsg,
   SuccessMsg,
-  signInUser,
 } from '@/app/imports';
 import {
   Form,
@@ -24,28 +22,23 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 
-export default function SignInForm() {
-  const searchParams = useSearchParams();
-  const urlError =
-    searchParams.get('error') === 'OAuthAccountNotLinked'
-      ? 'Email already in use with diffrent provider'
-      : '';
+export default function ResetForm() {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | undefined>('');
   const [success, setSuccess] = useState<string | undefined>('');
-  const form = useForm<z.infer<typeof SignInSchema>>({
-    resolver: zodResolver(SignInSchema),
+  const form = useForm<z.infer<typeof ResetSchema>>({
+    resolver: zodResolver(ResetSchema),
     defaultValues: {
       email: '',
-      password: '',
     },
   });
 
-  const onSubmit = (values: z.infer<typeof SignInSchema>) => {
+  const onSubmit = (values: z.infer<typeof ResetSchema>) => {
+    console.log(values);
     setError('');
     setSuccess('');
     startTransition(() => {
-      signInUser(values).then((data) => {
+      reset(values).then((data) => {
         setError(data?.error);
         setSuccess(data?.success);
       });
@@ -54,10 +47,9 @@ export default function SignInForm() {
 
   return (
     <CardWrapper
-      headerLabel="Welcome Back"
-      backBtnLabel="Don't have an account"
-      backBtnHref="/auth/register"
-      showSocial
+      headerLabel="Forgot Password"
+      backBtnLabel="Back to Sign In"
+      backBtnHref="/auth/signIn"
     >
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -80,34 +72,8 @@ export default function SignInForm() {
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={isPending}
-                      {...field}
-                      placeholder="******"
-                      type="password"
-                    />
-                  </FormControl>
-                  <Button
-                    size="sm"
-                    variant="link"
-                    asChild
-                    className="px-0 font-normal"
-                  >
-                    <Link href="/auth/reset">Reset Password</Link>
-                  </Button>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
           </div>
-          <ErrorMsg message={error || urlError} />
+          <ErrorMsg message={error} />
           <SuccessMsg message={success} />
           <Button
             disabled={isPending}
@@ -115,7 +81,7 @@ export default function SignInForm() {
             variant="default"
             className="w-full"
           >
-            Sign In
+            Send Reset Email
           </Button>
         </form>
       </Form>
