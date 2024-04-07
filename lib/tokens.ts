@@ -8,7 +8,7 @@ import crytpo from 'crypto'
 export const generateTwoFactorToken = async (email: string) => {
 
   const token = crytpo.randomInt(100_000, 100_000_000).toString()
-  const expires = new Date(new Date().getTime() + 3600 * 1000)
+  const expires = new Date(new Date().getTime() + 5 * 60 * 1000)
 
   const existingToken = await getTwoFactorTokenByEmail(email)
 
